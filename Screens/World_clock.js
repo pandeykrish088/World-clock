@@ -1,0 +1,105 @@
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, Platform, AppRegistry } from 'react-native';
+
+export default class WorldClock extends Component {
+  constructor() {
+    super();
+    this.state = {
+      currentTime: null,
+      currentDay: null,
+    };
+    this.daysArray = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ];
+  }
+
+  componentWillMount() {
+    this.getCurrentTime();
+  }
+
+  getCurrentTime = () => {
+    let hour = new Date().getHours();
+    let minutes = new Date().getMinutes();
+    let seconds = new Date().getSeconds();
+    let am_pm = 'pm';
+
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+
+    if (seconds < 10) {
+      seconds = '0' + seconds;
+    }
+
+    if (hour > 12) {
+      hour = hour - 12;
+    }
+
+    if (hour == 0) {
+      hour = 12;
+    }
+
+    if (new Date().getHours() < 12) {
+      am_pm = 'am';
+    }
+
+    this.setState({
+      currentTime: hour + ':' + minutes + ':' + seconds + '' + am_pm,
+    });
+
+    this.daysArray.map((item, key) => {
+      if (key == new Date().getDay()) {
+        this.setState({
+          currentDay: item.toUpperCase(),
+        });
+      }
+    });
+  };
+
+  componentWillMount() {
+    clearInterval(this.timer);
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.getCurrentTime();
+    }, 1000);
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.daysText}> {this.state.currentDay} </Text>
+          <Text style={styles.timeText}> {this.state.currentTime} </Text>
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'ios' ? 20 : 0,
+    justifyContent: 'center',
+  },
+  timeText: {
+    fontSize: 50,
+    color: '#f44336',
+    textAlign: 'center'
+  },
+  daysText: {
+     color: '#2196f3', 
+     fontSize: 25, 
+     paddingBottom: 0,
+     textAlign: 'center',
+     marginBottom: 100
+     },
+});
